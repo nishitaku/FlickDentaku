@@ -4,18 +4,31 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableStringBuilder;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
+
 import jp.co.nishitaku.dentaku.Status.PushedStatus;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    private static final int SWIPE_MIN_DISTANCE_X = 50;           // X軸最低スワイプ距離
+    private static final int SWIPE_THRESHOLD_VELOCITY_X = 200;    // X軸最低スワイプスピード
+    private static final int SWIPE_MAX_OFF_PATH_Y = 250;          // Y軸の移動距離(これ以上なら横移動を判定しない)
+    private static final int SWIPE_MIN_DISTANCE_Y = 50;           // Y軸最低スワイプ距離
+    private static final int SWIPE_THRESHOLD_VELOCITY_Y = 200;    // Y軸最低スワイプスピード
+    private static final int SWIPE_MAX_OFF_PATH_X = 250;          // X軸の移動距離(これ以上なら縦移動を判定しない)
+
     private TextView textViewCalc = null;
     private TextView textViewResult = null;
+
+    private GestureDetector mGestureDetector;   // タッチイベントを処理するためのインタフェース
 
     PushedStatus pushedStatus = PushedStatus.UNKNOWN;
 
@@ -149,6 +162,54 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    /**
+     * タッチイベントのリスナー
+     */
+    SimpleOnGestureListener mOnGestureListener = new SimpleOnGestureListener() {
+
+        // フリックイベント
+        @Override
+        public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
+          try {
+              // 移動距離・スピードを出力
+              float distance_x = Math.abs((event1.getX() - event2.getX()));
+              float velocity_x = Math.abs(velocityX);
+              float distance_y = Math.abs((event1.getY() - event2.getY()));
+              float velocity_y = Math.abs(velocityY);
+              Log.d(TAG, "onFling: 横の移動距離=" + distance_x + " 横の移動スピード=" + velocity_x);
+              Log.d(TAG, "onFling: 縦の移動距離=" + distance_y + " 縦の移動スピード=" + velocity_y);
+
+              if (Math.abs(event1.getY() - event2.getY()) > SWIPE_MAX_OFF_PATH_Y) {
+                  // Y軸の移動距離が大きすぎる場合
+                  Log.d(TAG, "onFling: 縦の移動距離が大きすぎ");
+              } else if (event1.getX() - event2.getX() > SWIPE_MIN_DISTANCE_X && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY_X) {
+                  // 開始位置から終了位置の移動距離が指定値より大きい
+                  // X軸の移動速度が指定値より大きい
+                  Log.d(TAG, "onFling: 右から左");
+              } else if (event2.getX() - event1.getX() > SWIPE_MIN_DISTANCE_X && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY_X) {
+                  // 終了位置から開始位置の移動距離が指定値より大きい
+                  // X軸の移動速度が指定値より大きい
+                  Log.d(TAG, "onFling: 左から右");
+              } else if (Math.abs(event1.getX() - event2.getX()) > SWIPE_MAX_OFF_PATH_X) {
+                  // X軸の移動距離が大きすぎる場合
+                  Log.d(TAG, "onFling: 横の移動距離が大きすぎ");
+              } else if (event2.getY() - event1.getY() > SWIPE_MIN_DISTANCE_Y && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY_Y) {
+                  // 開始位置から終了位置の移動距離が指定値より大きい
+                  // Y軸の移動速度が指定値より大きい
+                  Log.d(TAG, "onFling: 上から下");
+              } else if (event1.getY() - event2.getY() > SWIPE_MIN_DISTANCE_Y && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY_Y) {
+                  // 終了位置から開始位置の移動距離が指定値より大きい
+                  // Y軸の移動速度が指定値より大きい
+                  Log.d(TAG, "onFling: 下から上");
+              }
+          } catch (Exception e) {
+              // 何もしない
+          }
+
+          return false;
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -159,6 +220,11 @@ public class MainActivity extends AppCompatActivity {
 
         setListener();
 
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return mGestureDetector.onTouchEvent(event);
     }
 
     /**
@@ -203,5 +269,6 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_kakeru).setOnClickListener(operatorKeyClickListener);
         findViewById(R.id.btn_del).setOnClickListener(clearKeyClickListener);
         findViewById(R.id.btn_clear).setOnClickListener(clearKeyClickListener);
+        mGestureDetector = new GestureDetector(this, mOnGestureListener);
     }
 }
