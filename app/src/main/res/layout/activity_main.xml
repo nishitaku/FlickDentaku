@@ -31,9 +31,18 @@
             android:id="@+id/text_result"
             android:textSize="30sp"/>
 
-        <include
-            layout="@layout/ten_key"
-            android:id="@+id/include_ten_key"/>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <include
+                layout="@layout/tenkey"/>
+
+            <include
+                layout="@layout/flickkey"/>
+
+        </FrameLayout>
+
 
     </LinearLayout>
 
