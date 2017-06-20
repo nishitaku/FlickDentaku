@@ -9,6 +9,7 @@ import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -36,6 +37,9 @@ public class MainActivity extends AppCompatActivity {
     double result = 0;                                  // 計算結果
     int recentOperator = R.id.btn_equal;
 
+    float fiveKey_x = 0;    // 5キーのx座標
+    float fiveKey_y = 0;    // 5キーのy座標
+
     /**
      * 数値キーを押したときの動作
      */
@@ -50,6 +54,41 @@ public class MainActivity extends AppCompatActivity {
             // 状態更新
             pushedStatus = PushedStatus.NUMBER;
             Log.d(TAG, "numberKeyClick: inputStr=" + inputStr);
+        }
+    };
+
+    OnTouchListener fiveKeyTouchListner = new OnTouchListener() {
+        @Override
+        public boolean onTouch(View view, MotionEvent event) {
+            Button button = (Button) view;
+
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    // 押したときの動作
+                    findViewById(R.id.btn_kakeru).setVisibility(View.VISIBLE);
+                    findViewById(R.id.btn_tasu).setVisibility(View.VISIBLE);
+                    findViewById(R.id.btn_hiku).setVisibility(View.VISIBLE);
+                    findViewById(R.id.btn_waru).setVisibility(View.VISIBLE);
+                    Log.d(TAG, "onTouch: ACTION_DOWN");
+                    break;
+                case MotionEvent.ACTION_UP:
+                    // 離したときの動作
+                    findViewById(R.id.btn_kakeru).setVisibility(View.INVISIBLE);
+                    findViewById(R.id.btn_tasu).setVisibility(View.INVISIBLE);
+                    findViewById(R.id.btn_hiku).setVisibility(View.INVISIBLE);
+                    findViewById(R.id.btn_waru).setVisibility(View.INVISIBLE);
+
+                    // 式に追加
+                    textViewCalc.append(button.getText());
+                    // 入力中文字列に追加
+                    inputStr.append(button.getText());
+                    // 状態更新
+                    pushedStatus = PushedStatus.NUMBER;
+                    Log.d(TAG, "onTouch: ACTION_UP");
+
+                    break;
+            }
+            return false;
         }
     };
 
@@ -171,36 +210,43 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
           try {
-              // 移動距離・スピードを出力
-              float distance_x = Math.abs((event1.getX() - event2.getX()));
-              float velocity_x = Math.abs(velocityX);
-              float distance_y = Math.abs((event1.getY() - event2.getY()));
-              float velocity_y = Math.abs(velocityY);
-              Log.d(TAG, "onFling: 横の移動距離=" + distance_x + " 横の移動スピード=" + velocity_x);
-              Log.d(TAG, "onFling: 縦の移動距離=" + distance_y + " 縦の移動スピード=" + velocity_y);
 
-              if (Math.abs(event1.getY() - event2.getY()) > SWIPE_MAX_OFF_PATH_Y) {
-                  // Y軸の移動距離が大きすぎる場合
-                  Log.d(TAG, "onFling: 縦の移動距離が大きすぎ");
-              } else if (event1.getX() - event2.getX() > SWIPE_MIN_DISTANCE_X && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY_X) {
-                  // 開始位置から終了位置の移動距離が指定値より大きい
-                  // X軸の移動速度が指定値より大きい
-                  Log.d(TAG, "onFling: 右から左");
-              } else if (event2.getX() - event1.getX() > SWIPE_MIN_DISTANCE_X && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY_X) {
-                  // 終了位置から開始位置の移動距離が指定値より大きい
-                  // X軸の移動速度が指定値より大きい
-                  Log.d(TAG, "onFling: 左から右");
-              } else if (Math.abs(event1.getX() - event2.getX()) > SWIPE_MAX_OFF_PATH_X) {
-                  // X軸の移動距離が大きすぎる場合
-                  Log.d(TAG, "onFling: 横の移動距離が大きすぎ");
-              } else if (event2.getY() - event1.getY() > SWIPE_MIN_DISTANCE_Y && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY_Y) {
-                  // 開始位置から終了位置の移動距離が指定値より大きい
-                  // Y軸の移動速度が指定値より大きい
-                  Log.d(TAG, "onFling: 上から下");
-              } else if (event1.getY() - event2.getY() > SWIPE_MIN_DISTANCE_Y && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY_Y) {
-                  // 終了位置から開始位置の移動距離が指定値より大きい
-                  // Y軸の移動速度が指定値より大きい
-                  Log.d(TAG, "onFling: 下から上");
+              // 5キー周辺からフリック開始した場合のみ有効
+              float start_x = event1.getX();
+              float start_y = event1.getY();
+              if (Math.abs(start_x - fiveKey_x) < 50 && Math.abs(start_y - fiveKey_y) < 50) {
+
+                  // 移動距離・スピードを出力
+                  float distance_x = Math.abs((event1.getX() - event2.getX()));
+                  float velocity_x = Math.abs(velocityX);
+                  float distance_y = Math.abs((event1.getY() - event2.getY()));
+                  float velocity_y = Math.abs(velocityY);
+                  Log.d(TAG, "onFling: 横の移動距離=" + distance_x + " 横の移動スピード=" + velocity_x);
+                  Log.d(TAG, "onFling: 縦の移動距離=" + distance_y + " 縦の移動スピード=" + velocity_y);
+
+                  if (Math.abs(event1.getY() - event2.getY()) > SWIPE_MAX_OFF_PATH_Y) {
+                      // Y軸の移動距離が大きすぎる場合
+                      Log.d(TAG, "onFling: 縦の移動距離が大きすぎ");
+                  } else if (event1.getX() - event2.getX() > SWIPE_MIN_DISTANCE_X && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY_X) {
+                      // 開始位置から終了位置の移動距離が指定値より大きい
+                      // X軸の移動速度が指定値より大きい
+                      Log.d(TAG, "onFling: 右から左");
+                  } else if (event2.getX() - event1.getX() > SWIPE_MIN_DISTANCE_X && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY_X) {
+                      // 終了位置から開始位置の移動距離が指定値より大きい
+                      // X軸の移動速度が指定値より大きい
+                      Log.d(TAG, "onFling: 左から右");
+                  } else if (Math.abs(event1.getX() - event2.getX()) > SWIPE_MAX_OFF_PATH_X) {
+                      // X軸の移動距離が大きすぎる場合
+                      Log.d(TAG, "onFling: 横の移動距離が大きすぎ");
+                  } else if (event2.getY() - event1.getY() > SWIPE_MIN_DISTANCE_Y && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY_Y) {
+                      // 開始位置から終了位置の移動距離が指定値より大きい
+                      // Y軸の移動速度が指定値より大きい
+                      Log.d(TAG, "onFling: 上から下");
+                  } else if (event1.getY() - event2.getY() > SWIPE_MIN_DISTANCE_Y && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY_Y) {
+                      // 終了位置から開始位置の移動距離が指定値より大きい
+                      // Y軸の移動速度が指定値より大きい
+                      Log.d(TAG, "onFling: 下から上");
+                  }
               }
           } catch (Exception e) {
               // 何もしない
@@ -218,13 +264,24 @@ public class MainActivity extends AppCompatActivity {
         textViewCalc = (TextView) findViewById(R.id.text_calc);
         textViewResult = (TextView) findViewById(R.id.text_result);
 
+        fiveKey_x = findViewById(R.id.btn_5).getX();
+        fiveKey_y = findViewById(R.id.btn_5).getY();
+
         setListener();
 
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        Log.d(TAG, "onTouchEvent: ");
         return mGestureDetector.onTouchEvent(event);
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        Log.d(TAG, "dispatchTouchEvent: ");
+        super.dispatchTouchEvent(ev);
+        return mGestureDetector.onTouchEvent(ev);
     }
 
     /**
@@ -257,6 +314,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_3).setOnClickListener(numberKeyClickListener);
         findViewById(R.id.btn_4).setOnClickListener(numberKeyClickListener);
         findViewById(R.id.btn_5).setOnClickListener(numberKeyClickListener);
+        findViewById(R.id.btn_5).setOnTouchListener(fiveKeyTouchListner);
         findViewById(R.id.btn_6).setOnClickListener(numberKeyClickListener);
         findViewById(R.id.btn_7).setOnClickListener(numberKeyClickListener);
         findViewById(R.id.btn_8).setOnClickListener(numberKeyClickListener);
@@ -267,7 +325,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_hiku).setOnClickListener(operatorKeyClickListener);
         findViewById(R.id.btn_waru).setOnClickListener(operatorKeyClickListener);
         findViewById(R.id.btn_kakeru).setOnClickListener(operatorKeyClickListener);
-        findViewById(R.id.btn_del).setOnClickListener(clearKeyClickListener);
+//        findViewById(R.id.btn_del).setOnClickListener(clearKeyClickListener);
         findViewById(R.id.btn_clear).setOnClickListener(clearKeyClickListener);
         mGestureDetector = new GestureDetector(this, mOnGestureListener);
     }
