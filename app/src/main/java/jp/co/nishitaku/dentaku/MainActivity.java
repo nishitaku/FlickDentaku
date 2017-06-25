@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView textViewResult = null;
 
     private GestureDetector mGestureDetector;   // タッチイベントを処理するためのインタフェース
+    private GestureDetector detector;
 
     PushedStatus pushedStatus = PushedStatus.UNKNOWN;
 
@@ -88,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
 
                     break;
             }
-            return false;
+            return detector.onTouchEvent(event);
         }
     };
 
@@ -267,22 +268,30 @@ public class MainActivity extends AppCompatActivity {
         fiveKey_x = findViewById(R.id.btn_5).getX();
         fiveKey_y = findViewById(R.id.btn_5).getY();
 
+        detector = new GestureDetector(getApplicationContext(), new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                Log.d(TAG, "onFling: BBBBBBBBBBBBBBBBBBBBB");
+                return super.onFling(e1, e2, velocityX, velocityY);
+            }
+        });
+
         setListener();
 
     }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        Log.d(TAG, "onTouchEvent: ");
-        return mGestureDetector.onTouchEvent(event);
-    }
+//    @Override
+//    public boolean onTouchEvent(MotionEvent event) {
+//        Log.d(TAG, "onTouchEvent: ");
+//        return mGestureDetector.onTouchEvent(event);
+//    }
 
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        Log.d(TAG, "dispatchTouchEvent: ");
-        super.dispatchTouchEvent(ev);
-        return mGestureDetector.onTouchEvent(ev);
-    }
+//    @Override
+//    public boolean dispatchTouchEvent(MotionEvent ev) {
+//        Log.d(TAG, "dispatchTouchEvent: ");
+//        super.dispatchTouchEvent(ev);
+//        return mGestureDetector.onTouchEvent(ev);
+//    }
 
     /**
      * 計算する
