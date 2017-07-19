@@ -9,7 +9,7 @@
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_gravity="center"
-        android:background="@android:color/holo_blue_light"
+        android:background="#770000ff"
         android:visibility="invisible"
         android:text="÷" />
 
@@ -23,7 +23,7 @@
             android:id="@+id/btn_tasu"
             android:layout_width="80dp"
             android:layout_height="match_parent"
-            android:background="@android:color/holo_blue_light"
+            android:background="#770000ff"
             android:visibility="invisible"
             android:text="+" />
 
@@ -32,7 +32,7 @@
             android:layout_width="80dp"
             android:layout_height="match_parent"
             android:layout_marginLeft="100dp"
-            android:background="@android:color/holo_blue_light"
+            android:background="#770000ff"
             android:visibility="invisible"
             android:text="×" />
 
@@ -43,7 +43,7 @@
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_gravity="center"
-        android:background="@android:color/holo_blue_light"
+        android:background="#770000ff"
         android:visibility="invisible"
         android:text="-" />
 
