@@ -13,6 +13,8 @@ import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.math.BigDecimal;
+
 import jp.co.nishitaku.dentaku.Status.PushedStatus;
 
 public class MainActivity extends AppCompatActivity {
@@ -32,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     PushedStatus pushedStatus = PushedStatus.UNKNOWN;
 
     StringBuilder inputStr = new StringBuilder();    // 入力中文字列
-    double result = 0;                                  // 計算結果
+    BigDecimal result = BigDecimal.ZERO;             // 計算結果
     int recentOperator = R.id.btn_equal;
 
     /**
@@ -123,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
                 // 式に追加
                 textViewCalc.append(" " + operatorButton.getText() + " ");
                 // 入力中文字列を数値に変換
-                double value = Double.parseDouble(inputStr.toString());
+                BigDecimal value = new BigDecimal(inputStr.toString());
 
                 if (recentOperator == R.id.btn_equal) {
                     // 計算結果がない場合(初回)は、そのまま格納
@@ -167,8 +169,6 @@ public class MainActivity extends AppCompatActivity {
     /**
      * イコールを押したときの動作
      * 計算結果を表示する
-     * →式を解析して再計算した結果を表示させたい
-     * 例えば式が 1 + 2 * 3 の場合、計算結果は9だが、7を表示させたい
      */
     OnClickListener equalKeyClickListener = new OnClickListener() {
         @Override
@@ -179,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
             switch (pushedStatus) {
                 case NUMBER:
                     // 入力中文字列を数値に変換
-                    double value = Double.parseDouble(inputStr.toString());
+                    BigDecimal value = new BigDecimal(inputStr.toString());
                     // 計算
                     result = calc(recentOperator, result, value);
                     Log.d(TAG, "operatorKeyClick: result=" + result);
@@ -210,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View view) {
             recentOperator = R.id.btn_equal;
-            result = 0;
+            result = BigDecimal.ZERO;
             textViewCalc.setText("");
             textViewResult.setText("");
             inputStr.setLength(0);
@@ -260,16 +260,16 @@ public class MainActivity extends AppCompatActivity {
      * @param value2
      * @return
      */
-    private double calc(int operator, double value1, double value2) {
+    private BigDecimal calc(int operator, BigDecimal value1, BigDecimal value2) {
         switch (operator) {
             case R.id.btn_tasu:
-                return value1 + value2;
+                return value1.add(value2);
             case R.id.btn_hiku:
-                return value1 - value2;
+                return value1.subtract(value2);
             case R.id.btn_kakeru:
-                return value1 * value2;
+                return value1.multiply(value2);
             case R.id.btn_waru:
-                return value1 / value2;
+                return value1.divide(value2, 12, BigDecimal.ROUND_HALF_UP);
             default:
                 return value1;
         }
