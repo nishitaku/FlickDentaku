@@ -35,7 +35,8 @@ public class MainActivity extends AppCompatActivity {
 
     StringBuilder inputStr = new StringBuilder();    // 入力中文字列
     BigDecimal result = BigDecimal.ZERO;             // 計算結果
-    int recentOperator = R.id.btn_equal;
+    int recentOpeBtn = R.id.btn_equal;
+    boolean isNeg = false;  // 負数フラグ(true:負数、false:正数)
 
     /**
      * 数値キーを押したときの動作
@@ -117,38 +118,54 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private void operatorKeyAction(Button operatorButton) {
-        Log.d(TAG, "operatorKeyClick: button=" + operatorButton.getText());
+    private void operatorKeyAction(Button opeBtn) {
+        Log.d(TAG, "operatorKeyAction: button=" + opeBtn.getText());
 
         switch (pushedStatus) {
             case NUMBER:
                 // 式に追加
-                textViewCalc.append(" " + operatorButton.getText() + " ");
-                // 入力中文字列を数値に変換
+                textViewCalc.append(" " + opeBtn.getText() + " ");
+                // 入力中文字列を数値に変換(
                 BigDecimal value = new BigDecimal(inputStr.toString());
 
-                if (recentOperator == R.id.btn_equal) {
+                if (recentOpeBtn == R.id.btn_equal) {
                     // 計算結果がない場合(初回)は、そのまま格納
                     result = value;
                 } else {
                     // ある場合は計算して、結果を表示
-                    result = calc(recentOperator, result, value);
+                    result = calc(recentOpeBtn, result, value);
                     textViewResult.setText(String.valueOf(result));
 
                 }
-                Log.d(TAG, "operatorKeyClick: result=" + result);
+                isNeg = false;
+                Log.d(TAG, "operatorKeyAction: result=" + result);
                 break;
 
             case OPERATOR:
+                // 「-」だった場合
+                if ( "-".equals(opeBtn.getText()) && isNeg == false) {
+                    // 式に追加
+                    textViewCalc.append(" " + opeBtn.getText() + " ");
+                    // 入力中文字列に追加
+                    inputStr.append(opeBtn.getText());
+                    // 負数フラグをたてる
+                    isNeg = true;
+
+                    Log.d(TAG, "operatorKeyAction: inputStr=" + inputStr);
+                    return;
+                }
+
                 // 直前の演算子を書き換える
                 SpannableStringBuilder sb = new SpannableStringBuilder(textViewCalc.getText());
-                if(sb.length() >= 3) {
-                    sb.delete(sb.length() - 3, sb.length());
-                    sb.append(" " + operatorButton.getText() + " ");
-                    textViewCalc.setText(sb.toString());
-                    sb.clear();
-                    sb = null;
-                }
+                // 負数フラグがたっている場合は、「-」も消す
+                int delSize = isNeg ? 6 : 3;
+                sb.delete(sb.length() - delSize, sb.length());
+                sb.append(" " + opeBtn.getText() + " ");
+                textViewCalc.setText(sb.toString());
+                sb.clear();
+                sb = null;
+                isNeg = false;
+
                 break;
 
             case EQUAL:
@@ -159,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
         // 押下した演算キーを格納
-        recentOperator = operatorButton.getId();
+        recentOpeBtn = opeBtn.getId();
         // 入力中文字列をリセット
         inputStr.setLength(0);
         // 状態更新
@@ -181,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
                     // 入力中文字列を数値に変換
                     BigDecimal value = new BigDecimal(inputStr.toString());
                     // 計算
-                    result = calc(recentOperator, result, value);
+                    result = calc(recentOpeBtn, result, value);
                     Log.d(TAG, "operatorKeyClick: result=" + result);
                     // 結果を表示
                     textViewResult.setText(String.valueOf(result));
@@ -200,6 +217,7 @@ public class MainActivity extends AppCompatActivity {
                 default:
                     break;
             }
+            isNeg = false;
         }
     };
 
@@ -209,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
     OnClickListener clearKeyClickListener = new OnClickListener() {
         @Override
         public void onClick(View view) {
-            recentOperator = R.id.btn_equal;
+            recentOpeBtn = R.id.btn_equal;
             result = BigDecimal.ZERO;
             textViewCalc.setText("");
             textViewResult.setText("");
@@ -244,11 +262,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setOperatorBtnBackground(int index) {
-        for(int i = 0; i < 4; i++) {
-            if(index == i) {
+        for (int i = 0; i < 4; i++) {
+            if (index == i) {
                 operatorBtnList[i].setBackgroundColor(Color.YELLOW);
             } else {
-                operatorBtnList[i].setBackgroundColor(Color.argb(127, 0, 0, 255));
+                operatorBtnList[i].setBackgroundColor(Color.rgb(0, 0, 255));
             }
         }
     }
@@ -263,11 +281,11 @@ public class MainActivity extends AppCompatActivity {
     private BigDecimal calc(int operator, BigDecimal value1, BigDecimal value2) {
         switch (operator) {
             case R.id.btn_tasu:
-                return value1.add(value2);
+                return value1.add(value2).stripTrailingZeros();
             case R.id.btn_hiku:
-                return value1.subtract(value2);
+                return value1.subtract(value2).stripTrailingZeros();
             case R.id.btn_kakeru:
-                return value1.multiply(value2);
+                return value1.multiply(value2).stripTrailingZeros();
             case R.id.btn_waru:
                 return value1.divide(value2, 12, BigDecimal.ROUND_HALF_UP);
             default:
