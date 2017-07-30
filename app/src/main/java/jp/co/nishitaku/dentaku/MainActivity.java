@@ -153,8 +153,11 @@ public class MainActivity extends AppCompatActivity {
                     result = calc(recentOpeBtn, result, value);
                     if (null == result) {
                         textViewResult.setText("E");
+                    } else if (result.equals(new BigDecimal("0E-12"))) {
+                        Log.d(TAG, "onClick: 0E-12");
+                        textViewResult.setText("0");
                     } else {
-                        textViewResult.setText(String.valueOf(result));
+                        textViewResult.setText(result.toPlainString());
                     }
 
                 }
@@ -238,8 +241,11 @@ public class MainActivity extends AppCompatActivity {
                     // 結果を表示
                     if (null == result) {
                         textViewResult.setText("E");
+                    } else if (result.equals(new BigDecimal("0E-12"))) {
+                        Log.d(TAG, "onClick: 0E-12");
+                        textViewResult.setText("0");
                     } else {
-                        textViewResult.setText(String.valueOf(result));
+                        textViewResult.setText(result.toPlainString());
                     }
                     // 初期化
                     textViewCalc.setText("");
@@ -368,5 +374,18 @@ public class MainActivity extends AppCompatActivity {
         view.getLocationOnScreen(location);
         outRect.offset(location[0], location[1]);
         return outRect.contains(x, y);
+    }
+
+
+    private String trimEndZero(String str) {
+        if (null == str) {
+            return null;
+        }
+        char[] val = str.toCharArray();
+        int len = val.length;
+        while (val[len - 1] == '0') {
+            len --;
+        }
+        return (len < val.length) ? str.substring(0, len) : str;
     }
 }
