@@ -17,6 +17,8 @@ import java.math.BigDecimal;
 
 import jp.co.nishitaku.dentaku.Status.PushedStatus;
 
+import static jp.co.nishitaku.dentaku.Status.PushedStatus.OPERATOR;
+
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -31,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private Button btnWaru = null;
     private Button[] operatorBtnList = null;
 
-    PushedStatus pushedStatus = PushedStatus.UNKNOWN;
+    PushedStatus pushedStatus = PushedStatus.INIT;
 
     StringBuilder inputStr = new StringBuilder();    // 入力中文字列
     BigDecimal result = BigDecimal.ZERO;             // 計算結果
@@ -44,6 +46,10 @@ public class MainActivity extends AppCompatActivity {
     OnClickListener numberKeyClickListener = new OnClickListener() {
         @Override
         public void onClick(View view) {
+            // 計算エラーが発生している場合は無視する
+            if (null == result) {
+                return;
+            }
             Button button = (Button) view;
             // 式に追加
             textViewCalc.append(button.getText());
@@ -55,6 +61,9 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    /**
+     *  5ボタンを押したときの動作
+     */
     OnTouchListener fiveKeyTouchListner = new OnTouchListener() {
         @Override
         public boolean onTouch(View view, MotionEvent event) {
@@ -118,8 +127,16 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    /**
+     * 演算子ボタンを押したときの動作
+     * @param opeBtn
+     */
     private void operatorKeyAction(Button opeBtn) {
         Log.d(TAG, "operatorKeyAction: button=" + opeBtn.getText());
+        // 計算エラーが発生している場合は無視する
+        if (null == result) {
+            return;
+        }
 
         switch (pushedStatus) {
             case NUMBER:
@@ -134,7 +151,11 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     // ある場合は計算して、結果を表示
                     result = calc(recentOpeBtn, result, value);
-                    textViewResult.setText(String.valueOf(result));
+                    if (null == result) {
+                        textViewResult.setText("E");
+                    } else {
+                        textViewResult.setText(String.valueOf(result));
+                    }
 
                 }
                 isNeg = false;
@@ -172,6 +193,20 @@ public class MainActivity extends AppCompatActivity {
                 // 何もしない
                 break;
 
+            case INIT:
+                // 「-」だった場合
+                if ( "-".equals(opeBtn.getText()) && isNeg == false) {
+                    // 式に追加
+                    textViewCalc.append(" " + opeBtn.getText() + " ");
+                    // 入力中文字列に追加
+                    inputStr.append(opeBtn.getText());
+                    // 負数フラグをたてる
+                    isNeg = true;
+
+                    Log.d(TAG, "operatorKeyAction: inputStr=" + inputStr);
+                }
+                return;
+
             default:
                 break;
         }
@@ -180,7 +215,7 @@ public class MainActivity extends AppCompatActivity {
         // 入力中文字列をリセット
         inputStr.setLength(0);
         // 状態更新
-        pushedStatus = PushedStatus.OPERATOR;
+        pushedStatus = OPERATOR;
     }
 
     /**
@@ -201,7 +236,11 @@ public class MainActivity extends AppCompatActivity {
                     result = calc(recentOpeBtn, result, value);
                     Log.d(TAG, "operatorKeyClick: result=" + result);
                     // 結果を表示
-                    textViewResult.setText(String.valueOf(result));
+                    if (null == result) {
+                        textViewResult.setText("E");
+                    } else {
+                        textViewResult.setText(String.valueOf(result));
+                    }
                     // 初期化
                     textViewCalc.setText("");
                     inputStr.setLength(0);
@@ -232,6 +271,8 @@ public class MainActivity extends AppCompatActivity {
             textViewCalc.setText("");
             textViewResult.setText("");
             inputStr.setLength(0);
+            pushedStatus = pushedStatus.INIT;
+            isNeg = false;
         }
     };
 
@@ -279,17 +320,22 @@ public class MainActivity extends AppCompatActivity {
      * @return
      */
     private BigDecimal calc(int operator, BigDecimal value1, BigDecimal value2) {
-        switch (operator) {
-            case R.id.btn_tasu:
-                return value1.add(value2).stripTrailingZeros();
-            case R.id.btn_hiku:
-                return value1.subtract(value2).stripTrailingZeros();
-            case R.id.btn_kakeru:
-                return value1.multiply(value2).stripTrailingZeros();
-            case R.id.btn_waru:
-                return value1.divide(value2, 12, BigDecimal.ROUND_HALF_UP);
-            default:
-                return value1;
+        try {
+            switch (operator) {
+                case R.id.btn_tasu:
+                    return value1.add(value2).stripTrailingZeros();
+                case R.id.btn_hiku:
+                    return value1.subtract(value2).stripTrailingZeros();
+                case R.id.btn_kakeru:
+                    return value1.multiply(value2).stripTrailingZeros();
+                case R.id.btn_waru:
+                    return value1.divide(value2, 12, BigDecimal.ROUND_HALF_UP).stripTrailingZeros();
+                default:
+                    return value1;
+            }
+        } catch (ArithmeticException exception) {
+            Log.d(TAG, "calc: 計算エラー発生");
+            return null;
         }
     }
 

@@ -7,10 +7,10 @@ package jp.co.nishitaku.dentaku;
 public class Status {
 
     public enum PushedStatus {
-        NUMBER(1),
-        OPERATOR(2),
-        EQUAL(3),
-        UNKNOWN(4);
+        NUMBER(1),      // 数値ボタン押下
+        OPERATOR(2),    // 演算子ボタン押下
+        EQUAL(3),       // ＝ボタン押下
+        INIT(4);        // 初期状態
 
         private final int id;
 
@@ -24,7 +24,7 @@ public class Status {
                     return num;
                 }
             }
-            return UNKNOWN;
+            return INIT;
         }
 
         public int getId() {
