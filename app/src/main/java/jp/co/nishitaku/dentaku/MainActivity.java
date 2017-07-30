@@ -152,9 +152,10 @@ public class MainActivity extends AppCompatActivity {
                     // ある場合は計算して、結果を表示
                     result = calc(recentOpeBtn, result, value);
                     if (null == result) {
+                        // 計算エラーの場合
                         textViewResult.setText("E");
                     } else if (result.equals(new BigDecimal("0E-12"))) {
-                        Log.d(TAG, "onClick: 0E-12");
+                        // 0を割った場合
                         textViewResult.setText("0");
                     } else {
                         textViewResult.setText(result.toPlainString());
@@ -240,9 +241,10 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, "operatorKeyClick: result=" + result);
                     // 結果を表示
                     if (null == result) {
+                        // 計算エラーの場合
                         textViewResult.setText("E");
                     } else if (result.equals(new BigDecimal("0E-12"))) {
-                        Log.d(TAG, "onClick: 0E-12");
+                        // 0を割った場合
                         textViewResult.setText("0");
                     } else {
                         textViewResult.setText(result.toPlainString());
