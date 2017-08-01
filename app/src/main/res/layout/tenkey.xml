@@ -11,21 +11,30 @@
             android:layout_width="0dip"
             android:layout_height="80dp"
             android:layout_weight="1"
-            android:text="7" />
+            android:text="7"
+            android:textSize="30sp"
+            android:fontFamily="sans-serif"
+            android:background="@drawable/tenkey_shape"/>
 
         <Button
             android:id="@+id/btn_8"
             android:layout_width="0dip"
             android:layout_height="80dp"
             android:layout_weight="1"
-            android:text="8" />
+            android:text="8"
+            android:textSize="30sp"
+            android:fontFamily="sans-serif"
+            android:background="@drawable/tenkey_shape"/>
 
         <Button
             android:id="@+id/btn_9"
             android:layout_width="0dip"
             android:layout_height="80dp"
             android:layout_weight="1"
-            android:text="9" />
+            android:text="9"
+            android:textSize="30sp"
+            android:fontFamily="sans-serif"
+            android:background="@drawable/tenkey_shape"/>
     </TableRow>
 
     <TableRow
@@ -37,21 +46,30 @@
             android:layout_width="0dip"
             android:layout_height="80dp"
             android:layout_weight="1"
-            android:text="4" />
+            android:text="4"
+            android:textSize="30sp"
+            android:fontFamily="sans-serif"
+            android:background="@drawable/tenkey_shape"/>
 
         <Button
             android:id="@+id/btn_5"
             android:layout_width="0dip"
             android:layout_height="80dp"
             android:layout_weight="1"
-            android:text="5" />
+            android:text="5"
+            android:textSize="30sp"
+            android:fontFamily="sans-serif"
+            android:background="@drawable/tenkey_shape"/>
 
         <Button
             android:id="@+id/btn_6"
             android:layout_width="0dip"
             android:layout_height="80dp"
             android:layout_weight="1"
-            android:text="6" />
+            android:text="6"
+            android:textSize="30sp"
+            android:fontFamily="sans-serif"
+            android:background="@drawable/tenkey_shape"/>
     </TableRow>
 
     <TableRow
@@ -63,21 +81,30 @@
             android:layout_width="0dip"
             android:layout_height="80dp"
             android:layout_weight="1"
-            android:text="1" />
+            android:text="1"
+            android:textSize="30sp"
+            android:fontFamily="sans-serif"
+            android:background="@drawable/tenkey_shape"/>
 
         <Button
             android:id="@+id/btn_2"
             android:layout_width="0dip"
             android:layout_height="80dp"
             android:layout_weight="1"
-            android:text="2" />
+            android:text="2"
+            android:textSize="30sp"
+            android:fontFamily="sans-serif"
+            android:background="@drawable/tenkey_shape"/>
 
         <Button
             android:id="@+id/btn_3"
             android:layout_width="0dip"
             android:layout_height="80dp"
             android:layout_weight="1"
-            android:text="3" />
+            android:text="3"
+            android:textSize="30sp"
+            android:fontFamily="sans-serif"
+            android:background="@drawable/tenkey_shape"/>
     </TableRow>
 
     <TableRow
@@ -89,21 +116,30 @@
             android:layout_width="0dip"
             android:layout_height="80dp"
             android:layout_weight="1"
-            android:text="." />
+            android:text="."
+            android:textSize="30sp"
+            android:fontFamily="sans-serif"
+            android:background="@drawable/tenkey_shape"/>
 
         <Button
             android:id="@+id/btn_0"
             android:layout_width="0dip"
             android:layout_height="80dp"
             android:layout_weight="1"
-            android:text="0" />
+            android:text="0"
+            android:textSize="30sp"
+            android:fontFamily="sans-serif"
+            android:background="@drawable/tenkey_shape"/>
 
         <Button
             android:id="@+id/btn_equal"
             android:layout_width="0dip"
             android:layout_height="80dp"
             android:layout_weight="1"
-            android:text="=" />
+            android:text="="
+            android:textSize="30sp"
+            android:fontFamily="sans-serif"
+            android:background="@drawable/tenkey_shape"/>
     </TableRow>
 
     <TableRow
@@ -115,6 +151,9 @@
             android:layout_width="0dip"
             android:layout_height="80dp"
             android:layout_weight="1"
-            android:text="CLEAR" />
+            android:text="CLEAR"
+            android:textSize="30sp"
+            android:fontFamily="sans-serif"
+            android:background="@drawable/tenkey_shape"/>
     </TableRow>
 </TableLayout>

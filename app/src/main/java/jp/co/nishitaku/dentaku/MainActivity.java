@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableStringBuilder;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -40,6 +41,11 @@ public class MainActivity extends AppCompatActivity {
     int recentOpeBtn = R.id.btn_equal;
     boolean isNeg = false;  // 負数フラグ(true:負数、false:正数)
 
+    private static final int SWIPE_MIN_DISTANCE = 50;
+    private static final int SWIPE_THRESHOLD_VELOCITY = 200;
+    private static final int SWIPE_MAX_OFF_PATH = 250;
+    private GestureDetector mGestureDetector;
+
     /**
      * 数値キーを押したときの動作
      */
@@ -67,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
     OnTouchListener fiveKeyTouchListner = new OnTouchListener() {
         @Override
         public boolean onTouch(View view, MotionEvent event) {
-            Button button = (Button) view;
             int x = (int)event.getRawX();
             int y = (int)event.getRawY();
 
@@ -284,6 +289,52 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    OnTouchListener deleteFlingListener = new OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            Log.d(TAG, "onTouch: deleteFlickListener");
+            return mGestureDetector.onTouchEvent(event);
+        }
+    };
+
+    private final GestureDetector.SimpleOnGestureListener mOnGestureListener = new GestureDetector.SimpleOnGestureListener() {
+
+        // フリックイベント
+        @Override
+        public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
+
+            try {
+
+                // 移動距離・スピードを出力
+                float distance_x = Math.abs((event1.getX() - event2.getX()));
+                float velocity_x = Math.abs(velocityX);
+                Log.d(TAG, "onFling: 横の移動距離:" + distance_x + " 横の移動スピード:" + velocity_x);
+
+                // Y軸の移動距離が大きすぎる場合
+                if (Math.abs(event1.getY() - event2.getY()) > SWIPE_MAX_OFF_PATH) {
+                    Log.d(TAG, "onFling: 縦の移動距離が大きすぎ");
+                }
+                // 開始位置から終了位置の移動距離が指定値より大きい
+                // X軸の移動速度が指定値より大きい
+                else if  (event1.getX() - event2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+                    Log.d(TAG, "onFling: 右から左");
+
+                }
+                // 終了位置から開始位置の移動距離が指定値より大きい
+                // X軸の移動速度が指定値より大きい
+                else if (event2.getX() - event1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+                    Log.d(TAG, "onFling: 左から右");
+                }
+
+            } catch (Exception e) {
+                // TODO
+            }
+
+            return false;
+        }
+
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -298,6 +349,8 @@ public class MainActivity extends AppCompatActivity {
         btnHiku = (Button) findViewById(R.id.btn_hiku);
         btnWaru = (Button) findViewById(R.id.btn_waru);
         operatorBtnList = new Button[]{btnKakeru, btnTasu, btnHiku, btnWaru};
+
+        mGestureDetector = new GestureDetector(getApplicationContext(), mOnGestureListener);
 
         setListener();
 
@@ -363,6 +416,8 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_dot).setOnClickListener(numberKeyClickListener);
         findViewById(R.id.btn_equal).setOnClickListener(equalKeyClickListener);
         findViewById(R.id.btn_clear).setOnClickListener(clearKeyClickListener);
+        textViewResult.setOnTouchListener(deleteFlingListener);
+        textViewCalc.setOnTouchListener(deleteFlingListener);
     }
 
 
@@ -378,16 +433,4 @@ public class MainActivity extends AppCompatActivity {
         return outRect.contains(x, y);
     }
 
-
-    private String trimEndZero(String str) {
-        if (null == str) {
-            return null;
-        }
-        char[] val = str.toCharArray();
-        int len = val.length;
-        while (val[len - 1] == '0') {
-            len --;
-        }
-        return (len < val.length) ? str.substring(0, len) : str;
-    }
 }
