@@ -3,4 +3,9 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#ff4081</color>
+    <color name="tenkeyNormal">#aaaaff</color>
+    <color name="tenkeyPressed">#8888ff</color>
+    <color name="tenkeyStroke">#ffffff</color>
+    <color name="flickkeyNormal">#888888</color>
+    <color name="flickkeyPressed">#444444</color>
 </resources>

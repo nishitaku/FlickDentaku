@@ -5,11 +5,9 @@
     android:layout_height="match_parent">
 
     <Button
+        style="@style/flickkeyBtn"
         android:id="@+id/btn_waru"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
         android:layout_gravity="center"
-        android:background="#770000ff"
         android:visibility="invisible"
         android:text="÷" />
 
@@ -20,30 +18,24 @@
         android:orientation="horizontal">
 
         <Button
+            style="@style/flickkeyBtn"
             android:id="@+id/btn_tasu"
-            android:layout_width="80dp"
-            android:layout_height="match_parent"
-            android:background="#770000ff"
             android:visibility="invisible"
             android:text="+" />
 
         <Button
+            style="@style/flickkeyBtn"
             android:id="@+id/btn_kakeru"
-            android:layout_width="80dp"
-            android:layout_height="match_parent"
             android:layout_marginLeft="100dp"
-            android:background="#770000ff"
             android:visibility="invisible"
             android:text="×" />
 
     </LinearLayout>
 
     <Button
+        style="@style/flickkeyBtn"
         android:id="@+id/btn_hiku"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
         android:layout_gravity="center"
-        android:background="#770000ff"
         android:visibility="invisible"
         android:text="-" />
 
