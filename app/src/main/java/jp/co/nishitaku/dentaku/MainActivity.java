@@ -1,8 +1,9 @@
 package jp.co.nishitaku.dentaku;
 
-import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableStringBuilder;
 import android.util.Log;
@@ -364,12 +365,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setOperatorBtnBackground(int index) {
+        Log.d(TAG, "setOperatorBtnBackground: index=" + index);
         for (int i = 0; i < 4; i++) {
+            GradientDrawable drawable = new GradientDrawable();
+            // 角を丸くする
+            drawable.setCornerRadius(20);
+            drawable.mutate();
             if (index == i) {
-                operatorBtnList[i].setBackgroundColor(Color.YELLOW);
+                drawable.setColor(ContextCompat.getColor(this, R.color.flickkeyNormal));
             } else {
-                operatorBtnList[i].setBackgroundColor(Color.rgb(0, 0, 255));
+                drawable.setColor(ContextCompat.getColor(this, R.color.flickkeyPressed));
             }
+            operatorBtnList[i].setBackground(drawable);
         }
     }
 

@@ -23,15 +23,17 @@
             android:textSize="30sp"
             android:textStyle="normal|bold"
             android:textColor="@color/colorAccent"
-            android:clickable="true"/>
+            android:clickable="true"
+            android:maxLines="1"/>
 
         <TextView
             android:text=""
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/text_result"
-            android:textSize="30sp"
-            android:clickable="true"/>
+            android:textSize="40sp"
+            android:clickable="true"
+            android:maxLines="1"/>
 
         <FrameLayout
             android:layout_width="match_parent"
