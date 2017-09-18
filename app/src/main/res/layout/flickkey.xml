@@ -9,7 +9,7 @@
         android:id="@+id/btn_waru"
         android:layout_gravity="center"
         android:visibility="invisible"
-        android:text="÷" />
+        android:text="@string/waru" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -21,14 +21,14 @@
             style="@style/flickkeyBtn"
             android:id="@+id/btn_tasu"
             android:visibility="invisible"
-            android:text="+" />
+            android:text="@string/tasu" />
 
         <Button
             style="@style/flickkeyBtn"
             android:id="@+id/btn_kakeru"
             android:layout_marginLeft="100dp"
             android:visibility="invisible"
-            android:text="×" />
+            android:text="@string/kakeru" />
 
     </LinearLayout>
 
@@ -37,6 +37,6 @@
         android:id="@+id/btn_hiku"
         android:layout_gravity="center"
         android:visibility="invisible"
-        android:text="-" />
+        android:text="@string/hiku" />
 
 </LinearLayout>

@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Dentaku</string>
+    <string name="tasu">+</string>
+    <string name="hiku">-</string>
+    <string name="waru">÷</string>
+    <string name="kakeru">×</string>
 </resources>
