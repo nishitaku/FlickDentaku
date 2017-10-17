@@ -128,9 +128,16 @@ public class MainActivity extends AppCompatActivity {
         if (null == result) {
             return;
         }
-        // 式に追加
+        String calcStr = textViewCalc.getText().toString();
+        if (Calc.isOperator(calcStr.charAt(calcStr.length() - 1))) {
+            // 式の最後の文字が演算子だった場合は、最後の文字を上書きする
+            textViewCalc.setText(calcStr.substring(0, calcStr.length() - 1) + opeBtn.getText());
+        } else {
+            // そうでない場合は式に追加する
 //        textViewCalc.append(" " + opeBtn.getText() + " ");
-        textViewCalc.append(opeBtn.getText());
+            textViewCalc.append(opeBtn.getText());
+        }
+
     }
 
     /**

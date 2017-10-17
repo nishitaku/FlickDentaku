@@ -1,10 +1,14 @@
 package jp.co.nishitaku.dentaku;
 
+import android.util.Log;
+
 import java.math.BigDecimal;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Created by takuro on 2017/09/11.
@@ -29,6 +33,19 @@ public class Calc{
     };
 
     /**
+     * 演算子かどうか判定する。
+     * @param c 判定したい文字
+     * @return
+     */
+    public static boolean isOperator (char c) {
+        if ('+' == c || '×' == c || '÷' == c || '-' == c) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * 数式をパースして計算する。
      * 逆ポーランド記法で計算する。使える演算子は四則演算と括弧。
      * スペースを含まない "(10+20)*30-(40+50)/2" のような式。空白文字は全て除去される。
@@ -42,6 +59,17 @@ public class Calc{
 
         // 空白文字を除去
         String s = expression.replaceAll("¥¥s+", "");
+        // 最後の演算子は削除する
+        if (s.length() > 0) {
+            if (isOperator(s.charAt(s.length() - 1))) {
+                s = s.substring(0, s.length() - 1);
+            }
+        }
+        Log.d(TAG, "parseExpression: string=" + s);
+        // 文字列が存在しない場合は0を返す
+        if (s.length() == 0) {
+            return new BigDecimal(0);
+        }
         // 末尾に")"をつけることで、最後にスタックを吐き出させる
         s = "(" + s + ")";
         final int len = s.length();
