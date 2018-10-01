@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
             Button button = (Button) view;
             Log.d(TAG, "Left:" + button.getLeft() + ",Top:" + button.getTop());
-            String numStr = (String)button.getText();
+            String numStr = (String) button.getText();
             if (dotFlag) {
                 // 小数点フラグがたっている場合は、'.'+数値を式に追加
                 numStr = '.' + numStr;
@@ -95,8 +95,8 @@ public class MainActivity extends AppCompatActivity {
     OnTouchListener fiveKeyTouchListner = new OnTouchListener() {
         @Override
         public boolean onTouch(View view, MotionEvent event) {
-            int x = (int)event.getRawX();
-            int y = (int)event.getRawY();
+            int x = (int) event.getRawX();
+            int y = (int) event.getRawY();
 
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
@@ -157,6 +157,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * 演算子ボタンの処理
+     *
      * @param opeBtn
      */
     private void operatorKeyAction(Button opeBtn) {
@@ -243,7 +244,7 @@ public class MainActivity extends AppCompatActivity {
         public void onClick(View view) {
             Log.d(TAG, "onClick: deleteKeyClickListener");
             CharSequence seq = textViewCalc.getText();
-            if(seq.length() > 0) {
+            if (seq.length() > 0) {
                 textViewCalc.setText(seq.subSequence(0, seq.length() - 1));
                 // 削除した結果、最後の文字が'.'だった場合は、これも削除する
                 Log.d(TAG, "Last charactar is " + textViewCalc.getText());
@@ -286,12 +287,13 @@ public class MainActivity extends AppCompatActivity {
 
         textViewCalc = findViewById(R.id.text_calc);
         textViewResult = findViewById(R.id.text_result);
-        btn5 =  findViewById(R.id.btn_5);
+        btn5 = findViewById(R.id.btn_5);
     }
 
     /**
      * 演算子ボタンを動的に生成する
      * onCreateの時点ではベースとなるキー5の情報が取得できないため、本メソッドにておこなう
+     *
      * @param hasFocus
      */
     @Override
@@ -322,6 +324,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * 演算子ボタンを作成する
+     *
      * @param type 演算子ボタンの種類
      * @return
      */
@@ -336,6 +339,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * 演算子ボタンのパラメータを作成する
+     *
      * @param type 演算子ボタンの種類
      * @return
      */
@@ -420,6 +424,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * 入力x, yがビュー領域内かどうか判定する
+     *
      * @param view
      * @param x
      * @param y
