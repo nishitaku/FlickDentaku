@@ -1,6 +1,6 @@
 # FlickDentaku
 
-![Badge Status](https://ci-as-a-service)
+[![Badge Status](https://img.shields.io/github/license/mashape/apistatus.svg)](	https://img.shields.io/github/license/mashape/apistatus.svg)
 
 (Androidアプリ)フリック電卓
 
