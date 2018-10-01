@@ -1,17 +1,18 @@
 package jp.co.nishitaku.dentaku;
 
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import java.math.BigDecimal;
@@ -30,12 +31,15 @@ public class MainActivity extends AppCompatActivity {
     private Button btnWaru = null;
     private Button[] operatorBtnList = null;
 
-    BigDecimal result = BigDecimal.ZERO;             // 計算結果
+    BigDecimal result = BigDecimal.ZERO;
+    boolean equalFlag = false;
+    boolean dotFlag = false;        // '.'ボタンが入力された状態
+    boolean opeFlag = true;         // 演算子が入力された状態
+    boolean decimalFlag = false;    // 小数が入力された状態
 
     private static final int SWIPE_MIN_DISTANCE = 50;
     private static final int SWIPE_THRESHOLD_VELOCITY = 200;
     private static final int SWIPE_MAX_OFF_PATH = 250;
-    private GestureDetector mGestureDetector;
 
     /**
      * 数値ボタンのクリックリスナー
@@ -47,14 +51,46 @@ public class MainActivity extends AppCompatActivity {
             if (null == result) {
                 return;
             }
+            // ＝フラグがたっている場合は、表示をクリア
+            if (equalFlag) {
+                textViewCalc.setText("");
+                equalFlag = false;
+            }
+
             Button button = (Button) view;
-            // 式に追加
-            textViewCalc.append(button.getText());
+            Log.d(TAG, "Left:" + button.getLeft() + ",Top:" + button.getTop());
+            String numStr = (String)button.getText();
+            if (dotFlag) {
+                // 小数点フラグがたっている場合は、'.'+数値を式に追加
+                numStr = '.' + numStr;
+                dotFlag = false;
+                decimalFlag = true;
+                if (opeFlag) {
+                    // 演算子フラグがたっている場合は、'0.+数値を式に追加
+                    numStr = '0' + numStr;
+                }
+            }
+
+            textViewCalc.append(numStr);
+            opeFlag = false;
         }
     };
 
     /**
-     *  "5"ボタンのクリックリスナー
+     * "."ボタンのクリックリスナー
+     */
+    OnClickListener dotKeyClickListener = new OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            // 小数が入力されていない場合はフラグをたてる
+            if (!decimalFlag) {
+                dotFlag = true;
+            }
+        }
+    };
+
+    /**
+     * "5"ボタンのクリックリスナー
      */
     OnTouchListener fiveKeyTouchListner = new OnTouchListener() {
         @Override
@@ -66,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
                 case MotionEvent.ACTION_DOWN:
                     // 押したときの動作
                     Log.d(TAG, "onTouch: ACTION_DOWN");
+
                     // 演算子ボタンを表示
                     setOperatorBtnVisibility(View.VISIBLE);
                     break;
@@ -124,20 +161,31 @@ public class MainActivity extends AppCompatActivity {
      */
     private void operatorKeyAction(Button opeBtn) {
         Log.d(TAG, opeBtn.getText() + " pushed.");
+        Log.d(TAG, "Left:" + opeBtn.getLeft() + ",Top:" + opeBtn.getTop());
         // 計算エラーが発生している場合は無視する
         if (null == result) {
             return;
         }
+
         String calcStr = textViewCalc.getText().toString();
+
+        if (calcStr.length() == 0) {
+            // 空だった場合は無視する
+            return;
+        }
+
         if (Calc.isOperator(calcStr.charAt(calcStr.length() - 1))) {
             // 式の最後の文字が演算子だった場合は、最後の文字を上書きする
             textViewCalc.setText(calcStr.substring(0, calcStr.length() - 1) + opeBtn.getText());
         } else {
             // そうでない場合は式に追加する
-//        textViewCalc.append(" " + opeBtn.getText() + " ");
             textViewCalc.append(opeBtn.getText());
         }
 
+        equalFlag = false;
+        dotFlag = false;
+        opeFlag = true;
+        decimalFlag = false;
     }
 
     /**
@@ -147,6 +195,7 @@ public class MainActivity extends AppCompatActivity {
     OnClickListener equalKeyClickListener = new OnClickListener() {
         @Override
         public void onClick(View view) {
+            Log.d(TAG, "onClick: equalKeyClickListener");
             Button button = (Button) view;
             Log.d(TAG, "Calc execute : " + textViewCalc.getText().toString());
             // 計算
@@ -163,8 +212,9 @@ public class MainActivity extends AppCompatActivity {
                 textViewResult.setText(result.toPlainString());
             }
 
-            // 初期化
-            textViewCalc.setText("");
+            equalFlag = true;
+            opeFlag = true;
+            decimalFlag = false;
         }
     };
 
@@ -174,59 +224,59 @@ public class MainActivity extends AppCompatActivity {
     OnClickListener clearKeyClickListener = new OnClickListener() {
         @Override
         public void onClick(View view) {
+            Log.d(TAG, "onClick: clearKeyClickListener");
             result = BigDecimal.ZERO;
             textViewCalc.setText("");
             textViewResult.setText("");
+            equalFlag = false;
+            dotFlag = false;
+            opeFlag = true;
+            decimalFlag = false;
         }
     };
 
     /**
-     *
+     * "DEL"ボタンのクリックリスナー
      */
-    OnTouchListener deleteFlingListener = new OnTouchListener() {
+    OnClickListener deleteKeyClickListener = new OnClickListener() {
         @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            Log.d(TAG, "onTouch: deleteFlickListener");
-            return mGestureDetector.onTouchEvent(event);
+        public void onClick(View view) {
+            Log.d(TAG, "onClick: deleteKeyClickListener");
+            CharSequence seq = textViewCalc.getText();
+            if(seq.length() > 0) {
+                textViewCalc.setText(seq.subSequence(0, seq.length() - 1));
+                // 削除した結果、最後の文字が'.'だった場合は、これも削除する
+                Log.d(TAG, "Last charactar is " + textViewCalc.getText());
+                if (textViewCalc.getText().toString().endsWith(".")) {
+                    Log.d(TAG, "end with .");
+                    seq = textViewCalc.getText();
+                    textViewCalc.setText(seq.subSequence(0, seq.length() - 1));
+                    dotFlag = false;
+                    decimalFlag = false;
+                }
+            }
+            equalFlag = false;
+            opeFlag = false;
         }
     };
 
-    private final GestureDetector.SimpleOnGestureListener mOnGestureListener = new GestureDetector.SimpleOnGestureListener() {
-
-        // フリックイベント
+    /**
+     * "+/-"ボタンのクリックリスナー
+     */
+    OnClickListener plusminusKeyClickListener = new OnClickListener() {
         @Override
-        public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
-
-            try {
-
-                // 移動距離・スピードを出力
-                float distance_x = Math.abs((event1.getX() - event2.getX()));
-                float velocity_x = Math.abs(velocityX);
-                Log.d(TAG, "onFling: 横の移動距離:" + distance_x + " 横の移動スピード:" + velocity_x);
-
-                // Y軸の移動距離が大きすぎる場合
-                if (Math.abs(event1.getY() - event2.getY()) > SWIPE_MAX_OFF_PATH) {
-                    Log.d(TAG, "onFling: 縦の移動距離が大きすぎ");
-                }
-                // 開始位置から終了位置の移動距離が指定値より大きい
-                // X軸の移動速度が指定値より大きい
-                else if  (event1.getX() - event2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                    Log.d(TAG, "onFling: 右から左");
-
-                }
-                // 終了位置から開始位置の移動距離が指定値より大きい
-                // X軸の移動速度が指定値より大きい
-                else if (event2.getX() - event1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                    Log.d(TAG, "onFling: 左から右");
-                }
-
-            } catch (Exception e) {
-                // TODO
+        public void onClick(View view) {
+            Log.d(TAG, "onClick: plusminusKeyClickListener");
+            CharSequence calc = textViewCalc.getText();
+            if (calc.toString().startsWith("-")) {
+                textViewCalc.setText(calc.subSequence(1, calc.length()));
+            } else {
+                StringBuilder sb = new StringBuilder();
+                sb.append("-");
+                sb.append(calc);
+                textViewCalc.setText(sb);
             }
-
-            return false;
         }
-
     };
 
     @Override
@@ -234,20 +284,96 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        textViewCalc = (TextView) findViewById(R.id.text_calc);
-        textViewResult = (TextView) findViewById(R.id.text_result);
+        textViewCalc = findViewById(R.id.text_calc);
+        textViewResult = findViewById(R.id.text_result);
+        btn5 =  findViewById(R.id.btn_5);
+    }
 
-        btn5 = (Button) findViewById(R.id.btn_5);
-        btnKakeru = (Button) findViewById(R.id.btn_kakeru);
-        btnTasu = (Button) findViewById(R.id.btn_tasu);
-        btnHiku = (Button) findViewById(R.id.btn_hiku);
-        btnWaru = (Button) findViewById(R.id.btn_waru);
+    /**
+     * 演算子ボタンを動的に生成する
+     * onCreateの時点ではベースとなるキー5の情報が取得できないため、本メソッドにておこなう
+     * @param hasFocus
+     */
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+
+        btnKakeru = createOpeBtn(R.string.kakeru);
+        btnTasu = createOpeBtn(R.string.tasu);
+        btnHiku = createOpeBtn(R.string.hiku);
+        btnWaru = createOpeBtn(R.string.waru);
+
+        FrameLayout.LayoutParams btnKakeruParams = createOpeBtnParams(R.string.kakeru);
+        FrameLayout.LayoutParams btnTasuParams = createOpeBtnParams(R.string.tasu);
+        FrameLayout.LayoutParams btnHikuParams = createOpeBtnParams(R.string.hiku);
+        FrameLayout.LayoutParams btnWaruParams = createOpeBtnParams(R.string.waru);
+
+        FrameLayout layout = findViewById(R.id.layout_tenkey);
+        layout.addView(btnKakeru, btnKakeruParams);
+        layout.addView(btnTasu, btnTasuParams);
+        layout.addView(btnHiku, btnHikuParams);
+        layout.addView(btnWaru, btnWaruParams);
+
+        setOperatorBtnVisibility(View.INVISIBLE);
+
         operatorBtnList = new Button[]{btnKakeru, btnTasu, btnHiku, btnWaru};
-
-        mGestureDetector = new GestureDetector(getApplicationContext(), mOnGestureListener);
-
         setListener();
+    }
 
+    /**
+     * 演算子ボタンを作成する
+     * @param type 演算子ボタンの種類
+     * @return
+     */
+    private Button createOpeBtn(int type) {
+        Button btn = new Button(this);
+        btn.setText(getString(type));
+        btn.setTextSize(30);
+        btn.setTypeface(Typeface.SANS_SERIF);
+
+        return btn;
+    }
+
+    /**
+     * 演算子ボタンのパラメータを作成する
+     * @param type 演算子ボタンの種類
+     * @return
+     */
+    private FrameLayout.LayoutParams createOpeBtnParams(int type) {
+        // 幅と高さ
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                btn5.getWidth(),
+                btn5.getHeight()
+        );
+        // 位置
+        int dx = 10;
+        int dy = 10;
+        switch (type) {
+            case R.string.kakeru:
+                params.leftMargin = btn5.getRight() + dx;
+                params.topMargin = btn5.getTop();
+                break;
+
+            case R.string.tasu:
+                params.rightMargin = btn5.getLeft() - dx;
+                params.topMargin = btn5.getTop();
+                break;
+
+            case R.string.hiku:
+                params.leftMargin = btn5.getLeft();
+                params.topMargin = btn5.getBottom() + dy;
+                break;
+
+            case R.string.waru:
+                params.leftMargin = btn5.getLeft();
+                params.topMargin = btn5.getTop() - dy - btn5.getHeight();
+                break;
+
+            default:
+                break;
+        }
+
+        return params;
     }
 
     private void setOperatorBtnVisibility(int visibility) {
@@ -264,9 +390,9 @@ public class MainActivity extends AppCompatActivity {
             drawable.setCornerRadius(20);
             drawable.mutate();
             if (index == i) {
-                drawable.setColor(ContextCompat.getColor(this, R.color.flickkeyNormal));
-            } else {
                 drawable.setColor(ContextCompat.getColor(this, R.color.flickkeyPressed));
+            } else {
+                drawable.setColor(ContextCompat.getColor(this, R.color.flickkeyNormal));
             }
             operatorBtnList[i].setBackground(drawable);
         }
@@ -284,16 +410,20 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_7).setOnClickListener(numberKeyClickListener);
         findViewById(R.id.btn_8).setOnClickListener(numberKeyClickListener);
         findViewById(R.id.btn_9).setOnClickListener(numberKeyClickListener);
-        findViewById(R.id.btn_dot).setOnClickListener(numberKeyClickListener);
+        findViewById(R.id.btn_dot).setOnClickListener(dotKeyClickListener);
         findViewById(R.id.btn_equal).setOnClickListener(equalKeyClickListener);
         findViewById(R.id.btn_clear).setOnClickListener(clearKeyClickListener);
-        textViewResult.setOnTouchListener(deleteFlingListener);
-        textViewCalc.setOnTouchListener(deleteFlingListener);
+        findViewById(R.id.btn_delete).setOnClickListener(deleteKeyClickListener);
+        findViewById(R.id.btn_plusminus).setOnClickListener(plusminusKeyClickListener);
     }
 
 
     /**
      * 入力x, yがビュー領域内かどうか判定する
+     * @param view
+     * @param x
+     * @param y
+     * @return
      */
     private boolean inViewBounds(final View view, int x, int y) {
         Rect outRect = new Rect();
@@ -303,5 +433,4 @@ public class MainActivity extends AppCompatActivity {
         outRect.offset(location[0], location[1]);
         return outRect.contains(x, y);
     }
-
 }

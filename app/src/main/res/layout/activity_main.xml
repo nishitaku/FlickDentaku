@@ -18,35 +18,38 @@
         <TextView
             android:text=""
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:id="@+id/text_calc"
-            android:textSize="30sp"
-            android:textStyle="normal|bold"
-            android:textColor="@color/colorAccent"
-            android:clickable="true"
-            android:maxLines="1"/>
+            android:textSize="40sp"
+            android:textColor="#000000"
+            android:maxLines="1"
+            android:layout_weight="1"
+            android:gravity="right"
+            android:maxLength="14"/>
 
         <TextView
             android:text=""
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:id="@+id/text_result"
             android:textSize="40sp"
-            android:clickable="true"
-            android:maxLines="1"/>
+            android:textColor="#000000"
+            android:maxLines="1"
+            android:layout_weight="1"
+            android:gravity="right"
+            android:maxLength="14"/>
 
         <FrameLayout
+            android:id="@+id/layout_tenkey"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="0dp"
+            android:layout_weight="5"
+            android:layout_gravity="bottom">
 
             <include
-                layout="@layout/tenkey"/>
-
-            <include
-                layout="@layout/flickkey"/>
+                layout="@layout/grid_tenkey"/>
 
         </FrameLayout>
-
 
     </LinearLayout>
 

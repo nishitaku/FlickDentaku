@@ -1,0 +1,131 @@
+<android.support.v7.widget.GridLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="2dp"
+    app:columnCount="3"
+    app:rowCount="5">
+
+    <android.support.v7.widget.AppCompatButton
+        style="@style/AppTheme.RaisedButton"
+        android:id="@+id/btn_clear"
+        android:text="C"
+        app:layout_columnWeight="1"
+        app:layout_gravity="fill"
+        app:layout_rowWeight="1"/>
+
+    <android.support.v7.widget.AppCompatButton
+        style="@style/AppTheme.RaisedButton"
+        android:id="@+id/btn_plusminus"
+        android:text="+/−"
+        app:layout_columnWeight="1"
+        app:layout_gravity="fill"
+        app:layout_rowWeight="1"/>
+
+    <android.support.v7.widget.AppCompatButton
+        style="@style/AppTheme.RaisedButton"
+        android:id="@+id/btn_delete"
+        android:text="DEL"
+        app:layout_columnWeight="1"
+        app:layout_gravity="fill"
+        app:layout_rowWeight="1"/>
+
+    <android.support.v7.widget.AppCompatButton
+        style="@style/AppTheme.RaisedButton"
+        android:id="@+id/btn_7"
+        android:text="7"
+        app:layout_columnWeight="1"
+        app:layout_gravity="fill"
+        app:layout_rowWeight="1"/>
+
+    <android.support.v7.widget.AppCompatButton
+        style="@style/AppTheme.RaisedButton"
+        android:id="@+id/btn_8"
+        android:text="8"
+        app:layout_columnWeight="1"
+        app:layout_gravity="fill"
+        app:layout_rowWeight="1"/>
+
+    <android.support.v7.widget.AppCompatButton
+        style="@style/AppTheme.RaisedButton"
+        android:id="@+id/btn_9"
+        android:text="9"
+        app:layout_columnWeight="1"
+        app:layout_gravity="fill"
+        app:layout_rowWeight="1"/>
+
+    <android.support.v7.widget.AppCompatButton
+        style="@style/AppTheme.RaisedButton"
+        android:id="@+id/btn_4"
+        android:text="4"
+        app:layout_columnWeight="1"
+        app:layout_gravity="fill"
+        app:layout_rowWeight="1"/>
+
+    <android.support.v7.widget.AppCompatButton
+        style="@style/AppTheme.RaisedButton"
+        android:id="@+id/btn_5"
+        android:text="5"
+        app:layout_columnWeight="1"
+        app:layout_gravity="fill"
+        app:layout_rowWeight="1"/>
+
+    <android.support.v7.widget.AppCompatButton
+        style="@style/AppTheme.RaisedButton"
+        android:id="@+id/btn_6"
+        android:text="6"
+        app:layout_columnWeight="1"
+        app:layout_gravity="fill"
+        app:layout_rowWeight="1"/>
+
+    <android.support.v7.widget.AppCompatButton
+        style="@style/AppTheme.RaisedButton"
+        android:id="@+id/btn_1"
+        android:text="1"
+        app:layout_columnWeight="1"
+        app:layout_gravity="fill"
+        app:layout_rowWeight="1"/>
+
+    <android.support.v7.widget.AppCompatButton
+        style="@style/AppTheme.RaisedButton"
+        android:id="@+id/btn_2"
+        android:text="2"
+        app:layout_columnWeight="1"
+        app:layout_gravity="fill"
+        app:layout_rowWeight="1"/>
+
+    <android.support.v7.widget.AppCompatButton
+        style="@style/AppTheme.RaisedButton"
+        android:id="@+id/btn_3"
+        android:text="3"
+        app:layout_columnWeight="1"
+        app:layout_gravity="fill"
+        app:layout_rowWeight="1"/>
+
+    <android.support.v7.widget.AppCompatButton
+        style="@style/AppTheme.RaisedButton"
+        android:id="@+id/btn_dot"
+        android:text="."
+        app:layout_columnWeight="1"
+        app:layout_gravity="fill"
+        app:layout_rowWeight="1"/>
+
+    <android.support.v7.widget.AppCompatButton
+        style="@style/AppTheme.RaisedButton"
+        android:id="@+id/btn_0"
+        android:text="0"
+        app:layout_columnWeight="1"
+        app:layout_gravity="fill"
+        app:layout_rowWeight="1"/>
+
+    <android.support.v7.widget.AppCompatButton
+        style="@style/AppTheme.RaisedButton"
+        android:id="@+id/btn_equal"
+        android:text="="
+        app:layout_columnWeight="1"
+        app:layout_gravity="fill"
+        app:layout_rowWeight="1"/>
+
+
+</android.support.v7.widget.GridLayout>

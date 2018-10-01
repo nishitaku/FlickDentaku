@@ -8,12 +8,12 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 
-import static android.content.ContentValues.TAG;
-
 /**
  * Created by takuro on 2017/09/11.
  */
 public class Calc{
+
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     /**
      * 逆ポーランド記法用の演算子優先度
@@ -75,11 +75,25 @@ public class Calc{
         final int len = s.length();
 
         String tmp = "";    // 数字用バッファ
+        boolean minusFlag = false;
+
         for (int i = 0; i < len; i++) {
             char c = s.charAt(i);
-            if ('0' <= c && c <= '9') {
-                // 数字だった場合、数字用バッファへ格納する
-                tmp += c;
+
+            if ('-' == c && i == 1) {
+                // 先頭が−だった場合は、フラグをたてる
+                minusFlag = true;
+                continue;
+            }
+            if (('0' <= c && c <= '9') || c == '.') {
+                // 数字または小数点だった場合、数字用バッファへ格納する
+                if (minusFlag) {
+                    tmp += "-" + c;
+                    minusFlag = false;
+                } else {
+                    tmp += c;
+                }
+
             } else {
                 // 演算子だった場合、数字用バッファを数値スタックへ積む
                 if (!tmp.equals("")) {
